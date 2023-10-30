@@ -6,25 +6,26 @@
 /*   By: nsabia <nsabia@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/17 16:07:14 by noel              #+#    #+#             */
-/*   Updated: 2023/10/30 12:02:56 by nsabia           ###   ########.fr       */
+/*   Updated: 2023/10/30 12:35:58 by nsabia           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*get_next_line(int fd)
+char	*ft_read(int start, int )
 {
-	static int	buffer;
 
-	buffer = BUFFER_SIZE;
-	if (fd < 0 || BUFFER_SIZE <= 0)
-		return ("bullshit");
-	return ("hello");
 }
 
-// #include <stdio.h>
+char	*get_next_line(int fd)
+{
+	static int	start;
+	static char	*str;
 
-// int main()
-// {
-// 	printf("%s", get_next_line(1));
-// }
+	start = 0;
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
+	str = ft_read(start, BUFFER_SIZE);
+
+	return (str);
+}
