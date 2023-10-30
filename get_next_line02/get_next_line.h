@@ -6,7 +6,16 @@
 /*   By: noel <noel@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/17 16:07:09 by noel              #+#    #+#             */
-/*   Updated: 2023/10/17 16:07:10 by noel             ###   ########.fr       */
+/*   Updated: 2023/10/29 18:04:42 by noel             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#ifndef GET_NEXT_LINE
+#define GET_NEXT_LINE
+
+#include <unistd.h>
+#include <stdlib.h>
+
+
+
+#endif
