@@ -1,4 +1,0 @@
--Errorcheck
--malloc and check mit einem counter
--bis zum ersten \n iterieren mit einer andere Funktion und das alles in einem string speichern (mit read lesen)
--

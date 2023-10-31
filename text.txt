@@ -1,0 +1,5 @@
+-static variable die buffer speichert
+-in der variable schauen wann ich an ein \n komme
+-neue Variable initialisieren und mallocen imt der laenge oben 
+-pointer der variable verschieben
+-wenn noch kein \n gefunden dann weiter und reallocieren und cat
