@@ -6,31 +6,11 @@
 /*   By: nsabia <nsabia@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/17 16:07:14 by noel              #+#    #+#             */
-/*   Updated: 2023/11/02 17:24:57 by nsabia           ###   ########.fr       */
+/*   Updated: 2023/11/02 19:02:10 by nsabia           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
-char	*ft_readone(int fd)
-{
-	char	*str;
-	int		i;
-
-	i = 0;
-	
-	while (1)
-	{
-		if (str[i] == '\n')
-			return (str);
-		else
-		{
-			if (read(fd, str, 1) < 0)
-				return (NULL);
-			i++;
-		}
-	}
-}
 
 char	*ft_read(int fd)
 {
@@ -52,13 +32,13 @@ char	*get_next_line(int fd)
 	i = 0;
 	//Errors abfangen
 	if (fd < 0 || BUFFER_SIZE < 1)
-		return ("hi");
+		return (NULL);
 	//buffer fuellen mit allem
 	buffer = ft_read(fd);
-	printf("%s", buffer);
 	//nach \n suchen um i zu initialisieren
 	while (buffer[i] != '\n' && i <= BUFFER_SIZE)
 		i++;
+	i++;
 	//wenn sich ein \n im buffer befindet str initialisieren und entsprechendes von buffer in str kopieren
 	if (i <= BUFFER_SIZE)
 	{
@@ -67,15 +47,17 @@ char	*get_next_line(int fd)
 			return (NULL);
 		ft_memcpy(str, buffer, i + 1);
 	}
+	//substring damit das richtige vom buffer zurueckgegeben wird
 	//wenn sich kein \n im buffer befindet wird so viel angehaengt bis man ein \n hat und an den buffer konketiniert
 	while (i > BUFFER_SIZE)
 	{
-		temp_str = ft_readone(fd);
+		temp_str = ft_read(fd);
 		ft_strlcat(buffer, temp_str, ft_strlen(temp_str));
 		str = (char *)malloc(i + 1 * sizeof(char));
 		if (!str)
 			return (NULL);
 		ft_memcpy(str, buffer, i + 1);
+		free (temp_str);
 	}
 	str[i] = '\0';
 	return (str);

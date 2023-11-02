@@ -5,7 +5,7 @@
 int main()
 {
     int fd = open("texttest.txt", O_RDONLY);
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i < 3; i++)
 	{
 		printf("%s", get_next_line(fd));
 	}
