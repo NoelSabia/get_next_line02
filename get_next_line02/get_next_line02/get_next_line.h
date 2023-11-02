@@ -6,7 +6,7 @@
 /*   By: nsabia <nsabia@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/17 16:07:09 by noel              #+#    #+#             */
-/*   Updated: 2023/10/31 15:01:29 by nsabia           ###   ########.fr       */
+/*   Updated: 2023/11/02 16:47:16 by nsabia           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,6 @@
 
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 42
-# endif
-
-# ifndef FD_ERR
-#  define FD_ERR -1
 # endif
 
 char	*get_next_line(int fd);
