@@ -6,7 +6,7 @@
 /*   By: nsabia <nsabia@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/17 16:07:14 by noel              #+#    #+#             */
-/*   Updated: 2023/11/03 18:06:53 by nsabia           ###   ########.fr       */
+/*   Updated: 2023/11/03 19:25:32 by nsabia           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,25 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-char	*get_line(char *buffer)
+char	*ft_strchr(const char *s, int c)
+{
+	int	i;
+
+	i = 0;
+	while (s[i] != '\0')
+	{
+		if (s[i] == (char)c)
+			return ((char *)(s + i));
+		i++;
+	}
+	if ((char)c == '\0')
+	{
+		return ((char *)(s + i));
+	}
+	return (NULL);
+}
+
+char	*ft_get_line(char *buffer)
 {
 	char	*str;
 	int		i;
@@ -49,6 +67,8 @@ char	*read_in_buf(char *buffer, int fd)
 	int		counter;
 
 	counter = 1;
+	if (!buffer)
+		return (NULL);
 	str = (char *)malloc(BUFFER_SIZE + 1);
 	if (!str)
 		return (NULL);
@@ -77,8 +97,8 @@ char	*copy_in_static(char *buffer)
 
 	i = 0;
 	o = 0;
-	while (buffer[i] != '\n' && buffer[i])	
-        i++;
+	while (buffer[i] != '\n' && buffer[i])
+		i++;
 	if (!buffer[i])
 	{
 		free (buffer);
@@ -92,9 +112,7 @@ char	*copy_in_static(char *buffer)
 		return (NULL);
 	}
 	while (buffer[i])
-	{
 		str[o++] = buffer[i++];
-	}
 	str[o] = '\0';
 	free (buffer);
 	return (str);
@@ -104,7 +122,9 @@ char	*get_next_line(int fd)
 {
 	static char	*buffer;
 	char		*result;
-	
+
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
 	if (!buffer)
 	{
 		buffer = malloc(BUFFER_SIZE + 1);
@@ -112,12 +132,10 @@ char	*get_next_line(int fd)
 			return (NULL);
 		buffer[0] = '\0';
 	}
-	if (fd < 0 || BUFFER_SIZE <= 0)
-		return (NULL);
 	buffer = read_in_buf(buffer, fd);
 	if (!buffer)
 		return (NULL);
-	result = get_line(buffer);
+	result = ft_get_line(buffer);
 	if (!result)
 		return (NULL);
 	buffer = copy_in_static(buffer);
