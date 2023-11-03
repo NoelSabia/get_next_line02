@@ -3,65 +3,123 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: noel <noel@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: nsabia <nsabia@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/17 16:07:14 by noel              #+#    #+#             */
-/*   Updated: 2023/11/03 10:04:21 by noel             ###   ########.fr       */
+/*   Updated: 2023/11/03 18:06:53 by nsabia           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include <stdlib.h>
+#include <unistd.h>
 
-char	*ft_read(int fd)
+char	*get_line(char *buffer)
 {
 	char	*str;
+	int		i;
 
-	str = (char *)malloc(BUFFER_SIZE);
-	if (read (fd, str, BUFFER_SIZE) < 0)
+	i = 0;
+	if (!buffer[i])
 		return (NULL);
+	while (buffer[i] != '\n' && buffer[i])
+		i++;
+	str = (char *)malloc(i + 1);
+	if (!str)
+		return (NULL);
+	i = 0;
+	while (buffer[i] != '\n' && buffer[i])
+	{
+		str[i] = buffer[i];
+		i++;
+	}
+	if (buffer[i] == '\n')
+	{
+		str[i] = buffer[i];
+		i++;
+	}
+	str[i] = '\0';
+	return (str);
+}
+
+char	*read_in_buf(char *buffer, int fd)
+{
+	char	*str;
+	char	*temp;
+	int		counter;
+
+	counter = 1;
+	str = (char *)malloc(BUFFER_SIZE + 1);
+	if (!str)
+		return (NULL);
+	while (!ft_strchr(buffer, '\n') && counter)
+	{
+		counter = read (fd, str, BUFFER_SIZE);
+		if (counter == -1)
+		{
+			free (str);
+			return (NULL);
+		}
+		str[counter] = '\0';
+		temp = ft_strjoin(buffer, str);
+		free(buffer);
+		buffer = temp;
+	}
+	free(str);
+	return (buffer);
+}
+
+char	*copy_in_static(char *buffer)
+{
+	char	*str;
+	int		i;
+	int		o;
+
+	i = 0;
+	o = 0;
+	while (buffer[i] != '\n' && buffer[i])	
+        i++;
+	if (!buffer[i])
+	{
+		free (buffer);
+		return (NULL);
+	}
+	i++;
+	str = (char *)malloc(ft_strlen(buffer) - i + 1);
+	if (!str)
+	{
+		free(buffer);
+		return (NULL);
+	}
+	while (buffer[i])
+	{
+		str[o++] = buffer[i++];
+	}
+	str[o] = '\0';
+	free (buffer);
 	return (str);
 }
 
 char	*get_next_line(int fd)
 {
-	static char		*buffer;
-	char			*str;
-	char			*temp_str;
-	static int		o;
-	static int		i;
-
-	i = 0;
-	//Errors abfangen
-	if (fd < 0 || BUFFER_SIZE < 1)
+	static char	*buffer;
+	char		*result;
+	
+	if (!buffer)
+	{
+		buffer = malloc(BUFFER_SIZE + 1);
+		if (!buffer)
+			return (NULL);
+		buffer[0] = '\0';
+	}
+	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	//buffer fuellen mit allem
-	buffer = ft_read(fd);
-	//nach \n suchen um i zu initialisieren
-	o = i;
-	while (buffer[i] != '\n' && i <= BUFFER_SIZE)
-		i++;
-	i++;
-	//wenn sich ein \n im buffer befindet str initialisieren und entsprechendes von buffer in str kopieren
-	if (i <= BUFFER_SIZE)
-	{
-		str = (char *)malloc(i + 1);
-		if (!str)
-			return (NULL);
-		str = ft_substr(buffer, o,i);
-		*buffer += i;
-	}
-	//substring damit das richtige vom buffer zurueckgegeben wird
-	//wenn sich kein \n im buffer befindet wird so viel angehaengt bis man ein \n hat und an den buffer konketiniert
-	if (i > BUFFER_SIZE)
-	{
-		temp_str = ft_read(fd);
-		ft_strlcat(buffer, temp_str, ft_strlen(temp_str));
-		str = (char *)malloc(i + 1 * sizeof(char));
-		if (!str)
-			return (NULL);
-		ft_memcpy(str, buffer, i + 1);
-		free (temp_str);
-	}
-	str[i] = '\0';
-	return (str);
+	buffer = read_in_buf(buffer, fd);
+	if (!buffer)
+		return (NULL);
+	result = get_line(buffer);
+	if (!result)
+		return (NULL);
+	buffer = copy_in_static(buffer);
+	return (result);
 }
