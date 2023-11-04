@@ -6,7 +6,7 @@
 /*   By: nsabia <nsabia@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/17 16:07:14 by noel              #+#    #+#             */
-/*   Updated: 2023/11/04 18:40:11 by nsabia           ###   ########.fr       */
+/*   Updated: 2023/11/04 19:04:51 by nsabia           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,9 @@ char	*ft_get_line(char *buffer)
 	return (str);
 }
 
+//muss mich um read kuemmern wenn es -1 zurueckgibt soll auch der buffer von davor fregegeben werden
+// beispiel: Error in test 4: get_next_line(5: "read_error.txt"): expected: "aaaaaaaaaa\n", got: "ccccccccaaaaaaaaaa\n"
+//Probable reason: You should clear the static buffer when a call to read returns -1
 char	*read_in_buf(char *buffer, int fd)
 {
 	char	*str;
@@ -115,6 +118,7 @@ char	*copy_in_static(char *buffer)
 	if (!str)
 	{
 		free(buffer);
+		free (str);
 		return (NULL);
 	}
 	while (buffer[i])
@@ -142,8 +146,6 @@ char	*get_next_line(int fd)
 		buffer[0] = '\0';
 	}
 	buffer = read_in_buf(buffer, fd);
-	if (buffer == NULL)
-		buffer = (char *)malloc(1);
 	result = ft_get_line(buffer);
 	if (!result)
 		return (NULL);
