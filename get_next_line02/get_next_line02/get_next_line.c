@@ -6,7 +6,7 @@
 /*   By: nsabia <nsabia@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/17 16:07:14 by noel              #+#    #+#             */
-/*   Updated: 2023/11/03 19:25:32 by nsabia           ###   ########.fr       */
+/*   Updated: 2023/11/04 12:59:49 by nsabia           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,10 @@ char	*ft_get_line(char *buffer)
 
 	i = 0;
 	if (!buffer[i])
+	{
+		free(buffer);
 		return (NULL);
+	}
 	while (buffer[i] != '\n' && buffer[i])
 		i++;
 	str = (char *)malloc(i + 1);
@@ -123,13 +126,16 @@ char	*get_next_line(int fd)
 	static char	*buffer;
 	char		*result;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, buffer, 0) < 0)
 		return (NULL);
 	if (!buffer)
 	{
 		buffer = malloc(BUFFER_SIZE + 1);
 		if (!buffer)
+		{
+			free(buffer);
 			return (NULL);
+		}
 		buffer[0] = '\0';
 	}
 	buffer = read_in_buf(buffer, fd);
