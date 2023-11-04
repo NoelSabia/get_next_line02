@@ -6,7 +6,7 @@
 /*   By: nsabia <nsabia@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/17 16:07:14 by noel              #+#    #+#             */
-/*   Updated: 2023/11/04 12:59:49 by nsabia           ###   ########.fr       */
+/*   Updated: 2023/11/04 18:40:11 by nsabia           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ char	*ft_strchr(const char *s, int c)
 	int	i;
 
 	i = 0;
+	if (!s)
+		return (NULL);
 	while (s[i] != '\0')
 	{
 		if (s[i] == (char)c)
@@ -41,11 +43,12 @@ char	*ft_get_line(char *buffer)
 	if (!buffer[i])
 	{
 		free(buffer);
+		buffer = NULL;
 		return (NULL);
 	}
 	while (buffer[i] != '\n' && buffer[i])
 		i++;
-	str = (char *)malloc(i + 1);
+	str = (char *)malloc(i + 2);
 	if (!str)
 		return (NULL);
 	i = 0;
@@ -128,7 +131,7 @@ char	*get_next_line(int fd)
 
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, buffer, 0) < 0)
 		return (NULL);
-	if (!buffer)
+	if (!buffer || read(fd, buffer, 0) < 0)
 	{
 		buffer = malloc(BUFFER_SIZE + 1);
 		if (!buffer)
@@ -139,8 +142,8 @@ char	*get_next_line(int fd)
 		buffer[0] = '\0';
 	}
 	buffer = read_in_buf(buffer, fd);
-	if (!buffer)
-		return (NULL);
+	if (buffer == NULL)
+		buffer = (char *)malloc(1);
 	result = ft_get_line(buffer);
 	if (!result)
 		return (NULL);
