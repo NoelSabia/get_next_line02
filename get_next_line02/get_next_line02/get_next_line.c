@@ -6,7 +6,7 @@
 /*   By: nsabia <nsabia@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/17 16:07:14 by noel              #+#    #+#             */
-/*   Updated: 2023/11/04 19:04:51 by nsabia           ###   ########.fr       */
+/*   Updated: 2023/11/08 14:23:41 by nsabia           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,7 @@ char	*ft_strchr(const char *s, int c)
 	int	i;
 
 	i = 0;
-	if (!s)
-		return (NULL);
-	while (s[i] != '\0')
+	while (s && s[i] != '\0')
 	{
 		if (s[i] == (char)c)
 			return ((char *)(s + i));
@@ -34,7 +32,7 @@ char	*ft_strchr(const char *s, int c)
 	return (NULL);
 }
 
-char	*ft_get_line(char *buffer)
+char	*ft_get_line(char *buffer, int *m)
 {
 	char	*str;
 	int		i;
@@ -42,8 +40,11 @@ char	*ft_get_line(char *buffer)
 	i = 0;
 	if (!buffer[i])
 	{
-		free(buffer);
-		buffer = NULL;
+		if (m == 0)
+		{
+			free(buffer);
+			buffer = NULL;
+		}
 		return (NULL);
 	}
 	while (buffer[i] != '\n' && buffer[i])
@@ -66,10 +67,7 @@ char	*ft_get_line(char *buffer)
 	return (str);
 }
 
-//muss mich um read kuemmern wenn es -1 zurueckgibt soll auch der buffer von davor fregegeben werden
-// beispiel: Error in test 4: get_next_line(5: "read_error.txt"): expected: "aaaaaaaaaa\n", got: "ccccccccaaaaaaaaaa\n"
-//Probable reason: You should clear the static buffer when a call to read returns -1
-char	*read_in_buf(char *buffer, int fd)
+char	*read_in_buf(char *buffer, int fd, int *i)
 {
 	char	*str;
 	char	*temp;
@@ -81,13 +79,29 @@ char	*read_in_buf(char *buffer, int fd)
 	str = (char *)malloc(BUFFER_SIZE + 1);
 	if (!str)
 		return (NULL);
-	while (!ft_strchr(buffer, '\n') && counter)
+	while (counter && !ft_strchr(buffer, '\n'))
 	{
 		counter = read (fd, str, BUFFER_SIZE);
 		if (counter == -1)
 		{
 			free (str);
+			free (buffer);
+			buffer = NULL;
 			return (NULL);
+		}
+		if (counter == 0)
+		{
+			*i = 1;
+			if (ft_strlen(buffer) > 0)
+				return (buffer);
+			else
+			{
+				free (str);
+				free (buffer);
+				buffer = NULL;
+				return (NULL);
+
+			}
 		}
 		str[counter] = '\0';
 		temp = ft_strjoin(buffer, str);
@@ -114,7 +128,7 @@ char	*copy_in_static(char *buffer)
 		return (NULL);
 	}
 	i++;
-	str = (char *)malloc(ft_strlen(buffer) - i + 1);
+	str = (char *)malloc(ft_strlen(buffer) - i + 1); // Leak 1
 	if (!str)
 	{
 		free(buffer);
@@ -124,31 +138,37 @@ char	*copy_in_static(char *buffer)
 	while (buffer[i])
 		str[o++] = buffer[i++];
 	str[o] = '\0';
-	free (buffer);
 	return (str);
 }
 
 char	*get_next_line(int fd)
 {
-	static char	*buffer;
+	static char	*buffer = 0;
+	char		*temp_buffer;
 	char		*result;
+	int			i;
 
+	i = 0;
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, buffer, 0) < 0)
 		return (NULL);
-	if (!buffer || read(fd, buffer, 0) < 0)
+	if (buffer == NULL)
 	{
-		buffer = malloc(BUFFER_SIZE + 1);
-		if (!buffer)
-		{
-			free(buffer);
-			return (NULL);
-		}
+		buffer = (char *)malloc(BUFFER_SIZE + 1);
 		buffer[0] = '\0';
 	}
-	buffer = read_in_buf(buffer, fd);
-	result = ft_get_line(buffer);
+	buffer = read_in_buf(buffer, fd, &i);
+	if (!buffer)
+	{
+		return (NULL);
+	}
+	result = ft_get_line(buffer, &i);
 	if (!result)
 		return (NULL);
-	buffer = copy_in_static(buffer);
+	temp_buffer = copy_in_static(buffer);
+	if (temp_buffer)
+	{
+		ft_strlcpy(buffer, temp_buffer, ft_strlen(temp_buffer) + 1);
+		free(temp_buffer);
+	}
 	return (result);
 }
