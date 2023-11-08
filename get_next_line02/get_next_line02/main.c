@@ -1,20 +1,31 @@
-#include <fcntl.h>
-#include "get_next_line.h"
-#include <stdio.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nsabia <nsabia@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/08 14:54:32 by nsabia            #+#    #+#             */
+/*   Updated: 2023/11/08 14:54:43 by nsabia           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-int main()
-{
-    int fd = open("texttest.txt", O_RDONLY);
-	char *str =get_next_line(fd); 
-	while (str)
-	{
-		printf("str: %s\n", str);
-		free(str);
-		str = get_next_line(fd);
-	}
-	close(fd);
-}
+// #include <fcntl.h>
+// #include "get_next_line.h"
+// #include <stdio.h>
 
+// int main()
+// {
+//     int fd = open("texttest.txt", O_RDONLY);
+// 	char *str =get_next_line(fd); 
+// 	while (str)
+// 	{
+// 		printf("str: %s\n", str);
+// 		free(str);
+// 		str = get_next_line(fd);
+// 	}
+// 	close(fd);
+// }
 
 // int main(void)
 // {
