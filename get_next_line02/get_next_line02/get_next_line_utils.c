@@ -6,7 +6,7 @@
 /*   By: nsabia <nsabia@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/17 16:07:12 by noel              #+#    #+#             */
-/*   Updated: 2023/11/08 15:16:06 by nsabia           ###   ########.fr       */
+/*   Updated: 2023/11/13 17:20:09 by nsabia           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,30 +29,15 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
 	return (i);
 }
 
-void	*ft_memset(void *s, int c, size_t len)
-{
-	unsigned char	*a;
-	unsigned char	*b;
-	size_t			i;
-
-	a = s;
-	b = (unsigned char *) &c;
-	i = 0;
-	while (i < len)
-	{
-		a[i] = *b;
-		i++;
-	}
-	return (s);
-}
-
 size_t	ft_strlcat(char *dst, const char *src, size_t size)
 {
 	size_t	i;
 	size_t	m;
+	size_t	n;
 
 	i = 0;
 	m = 0;
+	n = 0;
 	while (dst[i] != 0 && i < size)
 		i++;
 	while (src[m] != 0 && i + m + 1 < size)
@@ -64,30 +49,80 @@ size_t	ft_strlcat(char *dst, const char *src, size_t size)
 	{
 		dst[i + m] = '\0';
 	}
-	return (ft_strlen(src) + i);
+	while (*src++)
+		n++;
+	return (n + i);
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*ft_strjoin(const char *s1, const char *s2)
 {
-	char	*s3;
-	size_t	sum;
+	int		total_len;
+	int		i;
+	int		j;
+	char	*joined;
 
-	sum = ft_strlen(s1) + ft_strlen(s2) + 1;
-	s3 = (char *)malloc(sum);
-	if (!s3)
+	i = 0;
+	j = 0;
+	if (!s1)
+		return (ft_strdup(s2));
+	if (!s2)
+		return (ft_strdup(s1));
+	while (s1[i])
+		i++;
+	while (s2[j])
+		j++;
+	total_len = i + j + 1;
+	joined = malloc(total_len * sizeof(char));
+	if (!joined)
+		return (0);
+	ft_strlcpy(joined, s1, total_len);
+	ft_strlcat(joined, s2, total_len);
+	return (joined);
+}
+
+char	*ft_substr(char const *s, unsigned int start, size_t len)
+{
+	char	*sub;
+	size_t	i;
+	size_t	j;
+	size_t	slen;
+
+	i = 0;
+	j = 0;
+	if (!s)
 		return (NULL);
-	ft_memset(s3, 0, sum);
-	ft_strlcpy(s3, s1, sum + 1);
-	ft_strlcat(s3, s2, sum + 1);
-	return (s3);
+	while (s[j])
+		j++;
+	slen = j;
+	if (start >= slen)
+		return (ft_strdup(""));
+	if (len > slen - start)
+		len = slen - start;
+	sub = (char *)malloc(sizeof(char) * (len + 1));
+	if (!sub)
+		return (NULL);
+	while (i < len)
+	{
+		sub[i] = s[start + i];
+		i++;
+	}
+	sub[i] = '\0';
+	return (sub);
 }
 
-size_t	ft_strlen(const char *s)
+char	*ft_strdup(const char *s)
 {
+	char	*dup;
+	size_t	len;
 	size_t	i;
 
 	i = 0;
-	while (s[i] != '\0')
+	while (s[i])
 		i++;
-	return (i);
+	len = i;
+	dup = (char *)malloc(sizeof(char) * (len + 1));
+	if (!dup)
+		return (0);
+	ft_strlcpy(dup, s, len + 1);
+	return (dup);
 }

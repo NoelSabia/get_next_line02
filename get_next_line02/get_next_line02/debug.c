@@ -84,13 +84,11 @@ size_t	ft_strlen(const char *s)
 #include <stdlib.h>
 #include <unistd.h>
 
-char	*ft_strchr(const char *s, int c, int counter)
+char	*ft_strchr(const char *s, int c)
 {
 	int	i;
 
 	i = 0;
-	if (counter == 0)
-		return (NULL);
 	if (!s)
 		return (NULL);
 	while (s && s[i] != '\0')
@@ -153,7 +151,7 @@ char	*read_in_buf(char *buffer, int fd, int *i)
 	str = (char *)malloc(BUFFER_SIZE + 1);
 	if (!str)
 		return (NULL);
-	while (counter && !ft_strchr(buffer, '\n', counter))
+	while (counter && !ft_strchr(buffer, '\n'))
 	{
 		counter = read (fd, str, BUFFER_SIZE);
 		if (counter == -1)
