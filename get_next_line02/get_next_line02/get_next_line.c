@@ -6,7 +6,7 @@
 /*   By: nsabia <nsabia@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/17 16:07:14 by noel              #+#    #+#             */
-/*   Updated: 2023/11/13 20:28:59 by nsabia           ###   ########.fr       */
+/*   Updated: 2023/11/13 20:31:42 by nsabia           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ int ft_new_newline(char **str, char **result, int i)
 	else if (i == 0)
 	{
 		*result = ft_strdup(*str);
-		ft_free(*str);
+		ft_free(str);
 		str = NULL;
 		return (0);
 	}
@@ -113,7 +113,7 @@ char	*get_next_line(int fd)
 		return (NULL);		
 	}
 	else
-		if (ft_find_string(&buffer, &result, i) == 1
+		if (ft_new_newline(&buffer, &result, i) == 1
 			|| (result == 0 && result != NULL))
 			return (result);
 	free (buffer);
