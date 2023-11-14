@@ -6,28 +6,62 @@
 /*   By: nsabia <nsabia@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/17 16:07:14 by noel              #+#    #+#             */
-/*   Updated: 2023/11/14 11:28:22 by nsabia           ###   ########.fr       */
+/*   Updated: 2023/11/14 17:30:25 by nsabia           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "get_next_line.h"
 #include <stdlib.h>
 #include <unistd.h>
-#include "get_next_line.h"
 
-int ft_find_newline(const char *s, int c)
+int	ft_strchr(const char *s, int c)
 {
-    int m;
+	int	i;
 
-	m = 0;
-    if (s == NULL)
-        return (-1);
-    while (s[m] != '\0' && s[m] != (char)c)
+	i = 0;
+	if (!s)
+    {
+		return (-1);
+    }
+	while (s[i] != '\0' && s[i] != (char)c)
 	{
-        m++;
+		if (s[i] == (char)c)
+			return (i);
+		i++;
 	}
-    if (s[m] == c)
-        return (m);
-    return (-1);
+    if (s[i] == (char)c)
+    {
+        return(i);
+    }
+	return (-1);
+}
+
+char *ft_read_in_buf(int fd, char *str, int *read_bytes)
+{
+	char buffer[BUFFER_SIZE + 1];
+	char *temp;
+	*read_bytes = 0;
+
+	int newline_counter = (ft_strchr(str, '\n') == -1);
+	while (newline_counter)
+	{
+		*read_bytes = read(fd, buffer, BUFFER_SIZE);
+		if (*read_bytes <= 0)
+			break ;
+		buffer[*read_bytes] = '\0';
+		if (str == NULL)
+		{
+			str = ft_strdup(buffer);
+		}
+		else
+		{
+			temp = ft_strjoin(str, buffer);
+			free(str);
+			str = temp;
+		}
+		newline_counter = (ft_strchr(buffer, '\n') == -1);
+	}
+	return (str);
 }
 
 void ft_free_buf(char **buf)
@@ -39,50 +73,20 @@ void ft_free_buf(char **buf)
     }
 }
 
-char *read_from_file(int fd, char *str, int *read_bytes)
-{
-    char buffer[BUFFER_SIZE + 1];
-    char *temp;
-    *read_bytes = 0;
-    if (ft_find_newline(str, '\n') == -1)
-    {
-        while (true)
-        {
-            *read_bytes = read(fd, buffer, BUFFER_SIZE);
-            if (*read_bytes == 0 || *read_bytes < 0)
-                break;
-            buffer[*read_bytes] = '\0';
-            if (!str)
-                str = ft_strdup(buffer);
-            else
-            {
-                temp = ft_strjoin(str, buffer);
-                free(str);
-                str = temp;
-            }
-            if (ft_find_newline(buffer, '\n') > -1)
-                break;
-        }
-    }
-    return (str);
-}
-
 int ft_copy(char **str, char **result, int i)
 {
-	int eos;
-	char *temp;
-	
-	eos = ft_find_newline(*str, '\n');
-	if (eos != -1)
+	int 	eos;
+	char	*temp;
+
+	eos = ft_strchr(*str, '\n');
+	if (eos >= 0)
 	{
 		*result = ft_substr(*str, 0, eos + 1);
 		temp = ft_strdup(&(*str)[eos + 1]);
-		free(*str);
+		free (*str);
 		*str = temp;
-		if ((*str)[0] == '\0')
-		{
+		if (*(*str) == '\0')
 			ft_free_buf(str);
-		}
 	}
 	else
 	{
@@ -96,30 +100,31 @@ int ft_copy(char **str, char **result, int i)
 	return (1);
 }
 
-
 char *get_next_line(int fd)
 {
-    static char *s = NULL;
-    char *line;
-    int result;
-    result = 0;
-    s = read_from_file(fd, s, &result);
-    if (result < 0)
-    {
-        free(s);
-        s = NULL;
-        return (NULL);
-    }
-    else if (result == 0 && s == NULL && ft_find_newline(s, '\n') == -1)
-    {
-        free(s);
-        s = NULL;
-        return (NULL);
-    }
-    else
-        if (ft_copy(&s, &line, result) == 1 || (result == 0 && line != NULL))
-            return (line);
-    free(s);
-    s = NULL;
-    return (NULL);
+	static char	*buf = NULL;
+	char		*line;
+	int			i;
+
+	i = 0;
+	buf = ft_read_in_buf(fd, buf, &i);
+	if (i < 0)
+	{
+		free(buf);
+		buf = NULL;
+		return (NULL);
+	}
+	if (i == 0 && buf == NULL && ft_strchr(buf, '\n') == -1)
+	{
+		free(buf);
+		buf = NULL;
+		return (NULL);
+	}
+	if (ft_copy(&buf, &line, i) == 1 || (i == 0 && line))
+	{
+			return (line);
+	}
+	free(buf);
+	buf = NULL;
+	return (NULL);
 }
