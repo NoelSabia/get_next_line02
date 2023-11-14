@@ -6,13 +6,11 @@
 /*   By: nsabia <nsabia@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/17 16:07:14 by noel              #+#    #+#             */
-/*   Updated: 2023/11/14 17:30:25 by nsabia           ###   ########.fr       */
+/*   Updated: 2023/11/14 18:23:39 by nsabia           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <stdlib.h>
-#include <unistd.h>
 
 int	ft_strchr(const char *s, int c)
 {
@@ -20,29 +18,30 @@ int	ft_strchr(const char *s, int c)
 
 	i = 0;
 	if (!s)
-    {
+	{
 		return (-1);
-    }
+	}
 	while (s[i] != '\0' && s[i] != (char)c)
 	{
 		if (s[i] == (char)c)
 			return (i);
 		i++;
 	}
-    if (s[i] == (char)c)
-    {
-        return(i);
-    }
+	if (s[i] == (char)c)
+	{
+		return (i);
+	}
 	return (-1);
 }
 
-char *ft_read_in_buf(int fd, char *str, int *read_bytes)
+char	*ft_read_in_buf(int fd, char *str, int *read_bytes)
 {
-	char buffer[BUFFER_SIZE + 1];
-	char *temp;
-	*read_bytes = 0;
+	char	buffer[BUFFER_SIZE + 1];
+	char	*temp;
+	int		newline_counter;
 
-	int newline_counter = (ft_strchr(str, '\n') == -1);
+	*read_bytes = 0;
+	newline_counter = (ft_strchr(str, '\n') == -1);
 	while (newline_counter)
 	{
 		*read_bytes = read(fd, buffer, BUFFER_SIZE);
@@ -64,18 +63,18 @@ char *ft_read_in_buf(int fd, char *str, int *read_bytes)
 	return (str);
 }
 
-void ft_free_buf(char **buf)
+void	ft_free_buf(char **buf)
 {
-    if (buf != NULL)
-    {
-        free(*buf);
-        *buf = NULL;
-    }
+	if (buf != NULL)
+	{
+		free(*buf);
+		*buf = NULL;
+	}
 }
 
-int ft_copy(char **str, char **result, int i)
+int	ft_copy(char **str, char **result, int i)
 {
-	int 	eos;
+	int		eos;
 	char	*temp;
 
 	eos = ft_strchr(*str, '\n');
@@ -100,7 +99,7 @@ int ft_copy(char **str, char **result, int i)
 	return (1);
 }
 
-char *get_next_line(int fd)
+char	*get_next_line(int fd)
 {
 	static char	*buf = NULL;
 	char		*line;
@@ -122,7 +121,7 @@ char *get_next_line(int fd)
 	}
 	if (ft_copy(&buf, &line, i) == 1 || (i == 0 && line))
 	{
-			return (line);
+		return (line);
 	}
 	free(buf);
 	buf = NULL;

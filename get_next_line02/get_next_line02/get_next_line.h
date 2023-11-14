@@ -6,7 +6,7 @@
 /*   By: nsabia <nsabia@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/17 16:07:09 by noel              #+#    #+#             */
-/*   Updated: 2023/11/14 17:27:46 by nsabia           ###   ########.fr       */
+/*   Updated: 2023/11/14 17:50:33 by nsabia           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,6 @@
 
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 42
-# endif
-
-# ifndef true
-#  define true 1
 # endif
 
 char	*ft_strjoin(char const *s1, char const *s2);
